@@ -1,1 +1,1 @@
-from apps.index import urls
+from . import urls

@@ -1,1 +1,1 @@
-from apps.authentication import urls
+from . import urls

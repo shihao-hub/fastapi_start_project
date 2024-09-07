@@ -3,11 +3,13 @@ from typing import Optional
 from pydantic import BaseModel
 from starlette import status
 
-from fastapi import Depends, HTTPException, FastAPI
+from fastapi import Depends, HTTPException, FastAPI,APIRouter
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 
 def register(app: FastAPI):
+    tags = ["权限认证"]
+    router = APIRouter(prefix="/authentication", tags=tags)
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
     # 模拟用户数据库
@@ -43,7 +45,7 @@ def register(app: FastAPI):
             )
         return user
 
-    @app.post("/token")  # 登录路由
+    @router.post("/token")  # 登录路由
     async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         user = fake_users_db.get(form_data.username)
         if not user or not user.get("hashed_password") == User.fake_hash_password(form_data.password):
@@ -54,6 +56,8 @@ def register(app: FastAPI):
             )
         return {"access_token": user.get("username"), "token_type": "bearer"}
 
-    @app.get("/users/me", response_model=User)  # 受保护的路由，不太懂，没有这个参数不行...
+    @router.get("/users/me", response_model=User)  # 受保护的路由，不太懂，没有这个参数不行...
     async def read_users_me(current_user: User = Depends(get_current_user)):
         return current_user
+
+    app.include_router(router)
