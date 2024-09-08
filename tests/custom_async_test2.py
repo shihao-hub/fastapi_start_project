@@ -14,6 +14,8 @@ def async_io_operation(duration):
     print("I/O 操作完成")
 
 
+# 2024-09-09：注意，此处可以变成个线程池！在编程语言的层面应该就可以模拟异步了
+#               虽然我不知道实现异步是不是需要更底层来实现，比如 CPython ...
 def thread_io_fn(task, *args):
     # 开个线程模拟 await asyncio.sleep(2) 这种操作
     print(task, *args)

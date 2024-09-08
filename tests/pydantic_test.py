@@ -56,8 +56,8 @@ def test():
         email: str
 
     detail = DetailModel(**dict(
-        id="a",
-        username="123",
+        id="a",  # 如果可以被强转为数字，这里并不会报错
+        username=["123"],
         email="123456",
         # creator="zsh"
     ))
