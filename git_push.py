@@ -19,4 +19,4 @@ if __name__ == '__main__':
         file.write(content)
 
     # 这里启动问题多多...
-    # os.system(str(BAT_FILE_PATH))
+    os.system(str(BAT_FILE_PATH))
