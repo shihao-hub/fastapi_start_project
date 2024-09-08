@@ -2,8 +2,9 @@ import typing as t
 
 import pydantic
 import requests
-from pydantic import BaseModel, ValidationError, Field, validator, constr
+from pydantic import BaseModel, ValidationError, Field, validator, constr, root_validator
 from pydantic_i18n import PydanticI18n
+# from pydantic_i18n import I18nConfig, set_i18n
 from schema import Schema, SchemaError, SchemaMissingKeyError, And
 from requests import Request
 
@@ -32,11 +33,16 @@ class View:
             self.request = request
 
         def _validate_request_data_for_cdi(self):
+            # pydantic 数据验证
+            data = self.DetailModel(**self.request.data)
+            # pydantic 数据序列化
+            data = data.json()
             Schema({
                 "id": And(lambda x: x is not None)
             }).validate(self.request.data)
 
         def create_detail_instance(self):
+            # pydantic 库可以用于验证用户输入数据的合法性，保证数据符合预期的格式和规则。
             self._validate_request_data_for_cdi()
 
         def apply(self):
@@ -69,24 +75,34 @@ def test():
         id: int
         username: t.List[str]
         email: str
-        password: t.Optional[constr(max_length=3, min_length=3)]
+        password: t.Optional[constr(max_length=3)]
+
+        # @root_validator
+        # def to_xml(cls, values):
+        #     xml_str = f"<user><username>{values['username']}</username><email>{values['email']}</email></user>"
+        #     return {"xml_data": xml_str} # 直接替换掉了所有结果了...
 
         @validator("password")
         def validate_password(cls, value):
             print(f"validate_password: {value}")
+            if not any(char.isdigit() for char in value):
+                raise ValueError("Password must contain at least one digit")
+            if not any(char.isalpha() for char in value):
+                raise ValueError("Password must contain at least one letter")
             return value
 
     detail = DetailModel(**dict(
         id="1",  # 如果可以被强转为数字，这里并不会报错
         username=["123"],
-        # email="123456",
-        password="11",
+        email="123456",
+        password="12a",  # "你好"
         creator="zsh",  # 不在模型中定义的字段会忽略，detail.dict() 也不会有这个键值对
     ))
     # DetailModel.validate(detail.dict())
     print(detail)
     print(detail.dict())
     print(detail.json())
+    # print(detail.xml_data)
     # print(detail.validate())
 
 
