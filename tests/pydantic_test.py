@@ -2,6 +2,7 @@ import requests
 from requests import Request
 
 import pydantic
+from pydantic import BaseModel
 from schema import Schema, SchemaError, SchemaMissingKeyError, And
 
 
@@ -17,7 +18,7 @@ from schema import Schema, SchemaError, SchemaMissingKeyError, And
 
 class View:
     class CreateDetailInstance:
-        class DetailModel:
+        class DetailModel(BaseModel):
             pass
 
         def __init__(self, source: "View", request: Request):
@@ -44,3 +45,28 @@ class View:
 
     def create_detail_instance(self, request):
         return self.CreateDetailInstance(self, request).apply()
+
+
+# [pydantic，一个超强的 Python 库！](https://segmentfault.com/a/1190000044856508)
+
+def test():
+    class DetailModel(BaseModel):
+        id: int
+        username: str
+        email: str
+
+    detail = DetailModel(**dict(
+        id="a",
+        username="123",
+        email="123456",
+        # creator="zsh"
+    ))
+    # DetailModel.validate(detail.dict())
+    # print(detail)
+    # print(detail.dict())
+    # print(detail.json())
+    # print(detail.validate())
+
+
+if __name__ == '__main__':
+    test()
