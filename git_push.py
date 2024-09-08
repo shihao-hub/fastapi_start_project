@@ -18,4 +18,5 @@ if __name__ == '__main__':
     with open(BAT_FILE_PATH, "w", encoding="utf-8") as file:
         file.write(content)
 
-    os.system(str(BAT_FILE_PATH))
+    # 这里启动问题多多...
+    # os.system(str(BAT_FILE_PATH))
