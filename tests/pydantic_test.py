@@ -3,11 +3,14 @@ import typing as t
 import pydantic
 import requests
 from pydantic import BaseModel, ValidationError, Field, validator, constr
-from pydantic_i18n import I18nConfig, set_i18n
+from pydantic_i18n import PydanticI18n
 from schema import Schema, SchemaError, SchemaMissingKeyError, And
 from requests import Request
 
-set_i18n(I18nConfig(locale='zh'))
+
+# pydantic_i18n Python 3.8+
+# 下面代码是 gpt 提供的，为什么没有？github 官方那边也没这么强大的功能...
+# set_i18n(I18nConfig(locale='zh'))
 
 # 在软件开发过程中，数据验证和序列化是非常重要的一环。
 # Python的pydantic库为开发者提供了强大的工具，可以轻松实现数据验证、模型定义和序列化操作。
@@ -53,12 +56,7 @@ class View:
 # [pydantic，一个超强的 Python 库！](https://segmentfault.com/a/1190000044856508)
 
 def test():
-    class DetailModel(BaseModel):
-        id: int
-        username: t.List[str]
-        email: str
-        password: t.Optional[constr(max_length=3, min_length=3)]
-
+    class CustomBaseModel(BaseModel):
         class Config:
             # 注意，还有全局设置的办法，继承 ValidationError 修改 __init__ 即可
             error_msg_templates = {
@@ -66,6 +64,12 @@ def test():
                 'value_error.any_str.min_length': '字符串长度不能小于 {limit_value}',
                 # 添加更多自定义错误信息...
             }
+
+    class DetailModel(CustomBaseModel):
+        id: int
+        username: t.List[str]
+        email: str
+        password: t.Optional[constr(max_length=3, min_length=3)]
 
         @validator("password")
         def validate_password(cls, value):
