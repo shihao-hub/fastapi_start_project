@@ -99,6 +99,7 @@ def test():
         creator="zsh",  # 不在模型中定义的字段会忽略，detail.dict() 也不会有这个键值对
     ))
     # DetailModel.validate(detail.dict())
+    print(detail.id)
     print(detail)
     print(detail.dict())
     print(detail.json())
