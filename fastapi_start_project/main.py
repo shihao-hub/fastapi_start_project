@@ -14,10 +14,10 @@ config = configparser.ConfigParser()
 config.read(BASE_DIR / "config/config.ini", encoding="utf-8")
 
 app = FastAPI(**dict(
-    title="学习 FastAPI 框架文档",
+    title=config.get("fastapi_config", "title"),
     description=open(BASE_DIR / "config/fastapi_doc/fastapi_description.md", encoding="utf-8").read(),
-    version="0.0.1",
-    debug=True,
+    version=config.get("fastapi_config", "version"),
+    debug=bool(config.get("fastapi_config", "debug")),
 ))
 
 # 挂载静态资源文件目录
@@ -27,7 +27,7 @@ app.mount("/static", settings.staticfiles, name="static")
 
 
 # 注册 urls （简单模仿一下 Django 的文件目录的，这种简单的方式可以让项目结构清晰明了，很舒服）
-apps.authentication.urls.register(app)
+# apps.authentication.urls.register(app) # 这个先注释掉，因为是随便写的，作用还不明了
 apps.index.urls.register(app)
 apps.test.urls.register(app)
 

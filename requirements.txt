@@ -1,3 +1,6 @@
 # python 3.9
-fastapi~=0.72.0
+fastapi~=0.72.0 # 应该执行 pip install fastapi[all]~=0.72.0
+python-dotenv
+python-multipart
 aioredis==2.0.1
+aiofiles
